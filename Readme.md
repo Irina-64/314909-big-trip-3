@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Ирина Трубчик](https://up.htmlacademy.ru/ecmascript-individual/3/user/314909).
-* Наставник: `Неизвестно`.
+* Наставник: [Дмитрий Атаманов](https://htmlacademy.ru/profile/atamanov_dmitriy).
 
 ---
 
