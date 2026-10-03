@@ -1,5 +1,4 @@
 import {render} from '../render.js';
-import SortView from '../view/sort-view.js';
 import PointListView from '../view/point-list-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import CreateFormView from '../view/create-form-view.js';
@@ -15,7 +14,6 @@ export default class TripPresenter {
   }
 
   init() {
-    render(new SortView(), this.container);
     render(this.pointListComponent, this.container);
     render(new EditFormView(), this.pointListComponent.getElement());
     render(new CreateFormView(), this.pointListComponent.getElement());
