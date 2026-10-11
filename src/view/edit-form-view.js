@@ -150,15 +150,20 @@ function createEditFormTemplate(point, destination, offers, destinations) {
 }
 
 export default class EditFormView extends AbstractView {
+  #point = null;
+  #destination = null;
+  #offers = [];
+  #destinations = [];
+
   constructor({point = BLANK_POINT, destination = null, offers = [], destinations = []}) {
     super();
-    this.point = point;
-    this.destination = destination;
-    this.offers = offers;
-    this.destinations = destinations;
+    this.#point = point;
+    this.#destination = destination;
+    this.#offers = offers;
+    this.#destinations = destinations;
   }
 
   get template() {
-    return createEditFormTemplate(this.point, this.destination, this.offers, this.destinations);
+    return createEditFormTemplate(this.#point, this.#destination, this.#offers, this.#destinations);
   }
 }
