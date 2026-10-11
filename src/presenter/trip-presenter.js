@@ -30,12 +30,21 @@ export default class TripPresenter {
     const destination = this.#pointsModel.getDestinationById(point.destination);
     const offers = this.#pointsModel.getOffersByType(point.type);
 
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+
     const pointComponent = new PointView({
       point,
       destination,
       offers,
       onEditClick: () => {
         replacePointToForm();
+        document.addEventListener('keydown', escKeyDownHandler);
       },
     });
 
@@ -46,6 +55,11 @@ export default class TripPresenter {
       destinations: this.#pointsModel.destinations,
       onFormSubmit: () => {
         replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      },
+      onRollupClick: () => {
+        replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
       },
     });
 
