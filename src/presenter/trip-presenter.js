@@ -1,4 +1,4 @@
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 import PointListView from '../view/point-list-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import CreateFormView from '../view/create-form-view.js';
@@ -22,15 +22,15 @@ export default class TripPresenter {
       destination: this.pointsModel.getDestinationById(firstPoint.destination),
       offers: this.pointsModel.getOffersByType(firstPoint.type),
       destinations: this.pointsModel.getDestinations(),
-    }), this.pointListComponent.getElement());
-    render(new CreateFormView(), this.pointListComponent.getElement());
+    }), this.pointListComponent.element);
+    render(new CreateFormView(), this.pointListComponent.element);
 
     for (const point of this.points) {
       render(new PointView({
         point,
         destination: this.pointsModel.getDestinationById(point.destination),
         offers: this.pointsModel.getOffersByType(point.type),
-      }), this.pointListComponent.getElement());
+      }), this.pointListComponent.element);
     }
   }
 }
