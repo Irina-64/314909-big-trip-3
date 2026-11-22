@@ -79,9 +79,8 @@ export default class TripPresenter {
   }
 
   #handlePointChange = (updatedPoint) => {
-    this.#points = this.#points.map((point) => (
-      point.id === updatedPoint.id ? updatedPoint : point
-    ));
+    this.#pointsModel.updatePoint(updatedPoint);
+    this.#points = [...this.#pointsModel.points];
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
 

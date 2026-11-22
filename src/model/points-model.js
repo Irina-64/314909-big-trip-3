@@ -34,4 +34,20 @@ export default class PointsModel extends Observable {
   getOffersByType(type) {
     return this.#offers.find((offersByType) => offersByType.type === type)?.offers ?? [];
   }
+
+  updatePoint(updatedPoint) {
+    const pointIndex = this.#points.findIndex(({id}) => id === updatedPoint.id);
+
+    if (pointIndex === -1) {
+      throw new Error('Can\'t update unexisting point');
+    }
+
+    this.#points = [
+      ...this.#points.slice(0, pointIndex),
+      updatedPoint,
+      ...this.#points.slice(pointIndex + 1),
+    ];
+
+    this._notify(updatedPoint);
+  }
 }
