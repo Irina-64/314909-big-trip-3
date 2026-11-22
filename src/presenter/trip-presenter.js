@@ -5,6 +5,7 @@ import EmptyListView from '../view/empty-list-view.js';
 import PointPresenter from './point-presenter.js';
 import {generateSort} from '../mock/sort.js';
 import {FilterType, SortType} from '../const.js';
+import {sort} from '../utils.js';
 
 export default class TripPresenter {
   #container = null;
@@ -18,6 +19,8 @@ export default class TripPresenter {
     }
 
     this.#currentSortType = sortType;
+    this.#clearPointList();
+    this.#renderPoints();
   };
 
   #sortComponent = new SortView({
@@ -46,9 +49,21 @@ export default class TripPresenter {
     render(this.#sortComponent, this.#container);
     render(this.#pointListComponent, this.#container);
 
-    for (const point of this.#points) {
+    this.#renderPoints();
+  }
+
+  #renderPoints() {
+    const sortedPoints = sort[this.#currentSortType]([...this.#points]);
+
+    for (const point of sortedPoints) {
       this.#renderPoint(point);
     }
+  }
+
+  #clearPointList() {
+    this.#handleModeChange();
+    this.#pointListComponent.element.replaceChildren();
+    this.#pointPresenters.clear();
   }
 
   #renderPoint(point) {

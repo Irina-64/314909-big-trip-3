@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import {FilterType} from './const.js';
+import {FilterType, SortType} from './const.js';
 
 dayjs.extend(duration);
 
@@ -55,6 +55,10 @@ function isPointPast({dateTo}) {
   return dayjs(dateTo).isBefore(dayjs());
 }
 
+function getPointDuration({dateFrom, dateTo}) {
+  return dayjs(dateTo).diff(dayjs(dateFrom));
+}
+
 const filter = {
   [FilterType.EVERYTHING]: (points) => [...points],
   [FilterType.FUTURE]: (points) => points.filter(isPointFuture),
@@ -62,4 +66,14 @@ const filter = {
   [FilterType.PAST]: (points) => points.filter(isPointPast),
 };
 
-export {getRandomInteger, getRandomArrayElement, formatDate, getDuration, capitalize, filter};
+const sort = {
+  [SortType.DAY]: (points) => points.sort((pointA, pointB) => (
+    dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom))
+  )),
+  [SortType.TIME]: (points) => points.sort((pointA, pointB) => (
+    getPointDuration(pointB) - getPointDuration(pointA)
+  )),
+  [SortType.PRICE]: (points) => points.sort((pointA, pointB) => pointB.basePrice - pointA.basePrice),
+};
+
+export {getRandomInteger, getRandomArrayElement, formatDate, getDuration, capitalize, filter, sort};
