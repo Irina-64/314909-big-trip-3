@@ -6,16 +6,18 @@ export default class PointPresenter {
   #pointListContainer = null;
   #pointsModel = null;
   #handleDataChange = null;
+  #handleModeChange = null;
 
   #pointComponent = null;
   #editFormComponent = null;
   #point = null;
   #isEditMode = false;
 
-  constructor({pointListContainer, pointsModel, onDataChange}) {
+  constructor({pointListContainer, pointsModel, onDataChange, onModeChange}) {
     this.#pointListContainer = pointListContainer;
     this.#pointsModel = pointsModel;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(point) {
@@ -56,6 +58,15 @@ export default class PointPresenter {
     replace(this.#pointComponent, previousPointComponent);
   }
 
+  resetView() {
+    if (!this.#isEditMode) {
+      return;
+    }
+
+    this.#replaceFormToPoint();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  }
+
   #replacePointToForm() {
     replace(this.#editFormComponent, this.#pointComponent);
     this.#isEditMode = true;
@@ -67,6 +78,7 @@ export default class PointPresenter {
   }
 
   #handleEditClick = () => {
+    this.#handleModeChange();
     this.#replacePointToForm();
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
