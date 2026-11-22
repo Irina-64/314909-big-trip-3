@@ -39,7 +39,7 @@ export default class PointPresenter {
     this.#editFormComponent = new EditFormView({
       point,
       destination,
-      offers,
+      offersByType: this.#pointsModel.offers,
       destinations: this.#pointsModel.destinations,
       onFormSubmit: this.#handleFormSubmit,
       onRollupClick: this.#handleRollupClick,
