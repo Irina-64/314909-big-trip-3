@@ -11,9 +11,19 @@ export default class TripPresenter {
   #pointsModel = null;
 
   #pointListComponent = new PointListView();
+  #currentSortType = SortType.DAY;
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#currentSortType = sortType;
+  };
+
   #sortComponent = new SortView({
     sortItems: generateSort(),
-    currentSortType: SortType.DAY,
+    currentSortType: this.#currentSortType,
+    onSortTypeChange: this.#handleSortTypeChange,
   });
 
   #pointPresenters = new Map();
