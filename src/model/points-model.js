@@ -17,6 +17,10 @@ export default class PointsModel {
     return this.#destinations;
   }
 
+  get offers() {
+    return this.#offers;
+  }
+
   getDestinationById(id) {
     return this.#destinations.find((destination) => destination.id === id);
   }
