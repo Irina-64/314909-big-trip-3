@@ -5,15 +5,17 @@ import EditFormView from '../view/edit-form-view.js';
 export default class PointPresenter {
   #pointListContainer = null;
   #pointsModel = null;
+  #handleDataChange = null;
 
   #pointComponent = null;
   #editFormComponent = null;
   #point = null;
   #isEditMode = false;
 
-  constructor({pointListContainer, pointsModel}) {
+  constructor({pointListContainer, pointsModel, onDataChange}) {
     this.#pointListContainer = pointListContainer;
     this.#pointsModel = pointsModel;
+    this.#handleDataChange = onDataChange;
   }
 
   init(point) {
@@ -29,6 +31,7 @@ export default class PointPresenter {
       destination,
       offers,
       onEditClick: this.#handleEditClick,
+      onFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#editFormComponent = new EditFormView({
@@ -76,6 +79,10 @@ export default class PointPresenter {
   #handleRollupClick = () => {
     this.#replaceFormToPoint();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
   #escKeyDownHandler = (evt) => {

@@ -43,9 +43,17 @@ export default class TripPresenter {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
       pointsModel: this.#pointsModel,
+      onDataChange: this.#handlePointChange,
     });
 
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = this.#points.map((point) => (
+      point.id === updatedPoint.id ? updatedPoint : point
+    ));
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
 }
