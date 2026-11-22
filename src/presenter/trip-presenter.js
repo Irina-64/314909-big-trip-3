@@ -15,6 +15,7 @@ export default class TripPresenter {
     sortItems: generateSort(),
     currentSortType: SortType.DAY,
   });
+
   #pointPresenters = new Map();
 
   #points = [];
