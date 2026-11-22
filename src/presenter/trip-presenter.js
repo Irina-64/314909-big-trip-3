@@ -11,6 +11,10 @@ export default class TripPresenter {
   #pointsModel = null;
 
   #pointListComponent = new PointListView();
+  #sortComponent = new SortView({
+    sortItems: generateSort(),
+    currentSortType: SortType.DAY,
+  });
   #pointPresenters = new Map();
 
   #points = [];
@@ -28,10 +32,7 @@ export default class TripPresenter {
       return;
     }
 
-    render(new SortView({
-      sortItems: generateSort(),
-      currentSortType: SortType.DAY,
-    }), this.#container);
+    render(this.#sortComponent, this.#container);
     render(this.#pointListComponent, this.#container);
 
     for (const point of this.#points) {
