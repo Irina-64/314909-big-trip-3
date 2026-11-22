@@ -1,4 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import 'flatpickr/dist/flatpickr.min.css';
 import {POINT_TYPES, DateFormat} from '../const.js';
 import {formatDate, capitalize} from '../utils.js';
 
