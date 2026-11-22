@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {POINT_TYPES, DateFormat} from '../const.js';
 import {formatDate, capitalize} from '../utils.js';
 
@@ -160,8 +160,7 @@ function createEditFormTemplate(point, destination, offers, destinations) {
   );
 }
 
-export default class EditFormView extends AbstractView {
-  #point = null;
+export default class EditFormView extends AbstractStatefulView {
   #destination = null;
   #offers = [];
   #destinations = [];
@@ -170,7 +169,7 @@ export default class EditFormView extends AbstractView {
 
   constructor({point = BLANK_POINT, destination = null, offers = [], destinations = [], onFormSubmit, onRollupClick}) {
     super();
-    this.#point = point;
+    this._state = {...point};
     this.#destination = destination;
     this.#offers = offers;
     this.#destinations = destinations;
@@ -184,8 +183,10 @@ export default class EditFormView extends AbstractView {
   }
 
   get template() {
-    return createEditFormTemplate(this.#point, this.#destination, this.#offers, this.#destinations);
+    return createEditFormTemplate(this._state, this.#destination, this.#offers, this.#destinations);
   }
+
+  _restoreHandlers() {}
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
