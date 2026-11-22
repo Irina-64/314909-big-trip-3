@@ -191,7 +191,9 @@ export default class EditFormView extends AbstractStatefulView {
     return createEditFormTemplate(this._state, this.#destinations, this.#offersByType);
   }
 
-  _restoreHandlers() {}
+  _restoreHandlers() {
+    this.#setEventListeners();
+  }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
