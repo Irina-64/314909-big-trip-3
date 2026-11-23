@@ -108,6 +108,9 @@ export default class TripPresenter {
     remove(this.#sortComponent);
     remove(this.#pointListComponent);
     remove(this.#emptyListComponent);
+    this.#sortComponent = null;
+    this.#pointListComponent = null;
+    this.#emptyListComponent = null;
     this.#pointPresenters.clear();
   }
 
