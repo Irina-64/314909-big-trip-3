@@ -84,6 +84,17 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setAborting() {
+    if (!this.#isEditMode) {
+      return;
+    }
+
+    this.#editFormComponent.shake(() => this.#editFormComponent.updateElement({
+      isSaving: false,
+      isDeleting: false,
+    }));
+  }
+
   destroy() {
     remove(this.#pointComponent);
     remove(this.#editFormComponent);
@@ -106,17 +117,10 @@ export default class PointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleFormSubmit = async (point) => {
+  #handleFormSubmit = (point) => {
     this.#editFormComponent.setSaving();
-
-    if (this.#isNewPoint) {
-      await this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, point);
-      this.#handleDestroy();
-      return;
-    }
-
-    await this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, point);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    const actionType = this.#isNewPoint ? UserAction.ADD_POINT : UserAction.UPDATE_POINT;
+    this.#handleDataChange(actionType, UpdateType.MINOR, point);
   };
 
   #handleRollupClick = () => {
@@ -124,14 +128,14 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleDeleteClick = async (point) => {
+  #handleDeleteClick = (point) => {
     if (this.#isNewPoint) {
       this.#handleDestroy();
       return;
     }
 
     this.#editFormComponent.setDeleting();
-    await this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
   };
 
   #handleFavoriteClick = () => {
@@ -144,6 +148,10 @@ export default class PointPresenter {
 
   #escKeyDownHandler = (evt) => {
     if (evt.key !== 'Escape') {
+      return;
+    }
+
+    if (this.#editFormComponent.isDisabled) {
       return;
     }
 

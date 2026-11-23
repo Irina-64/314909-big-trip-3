@@ -208,6 +208,10 @@ export default class EditFormView extends AbstractStatefulView {
     return createEditFormTemplate(this._state, this.#destinations, this.#offersByType);
   }
 
+  get isDisabled() {
+    return this._state.isSaving || this._state.isDeleting;
+  }
+
   _restoreHandlers() {
     this.#setEventListeners();
     this.#setDatePickers();

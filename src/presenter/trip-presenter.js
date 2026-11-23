@@ -149,6 +149,16 @@ export default class TripPresenter {
           await this.#pointsModel.deletePoint(updateType, update);
           break;
       }
+    } catch {
+      switch (actionType) {
+        case UserAction.UPDATE_POINT:
+        case UserAction.DELETE_POINT:
+          this.#pointPresenters.get(update.id)?.setAborting();
+          break;
+        case UserAction.ADD_POINT:
+          this.#newPointPresenter?.setAborting();
+          break;
+      }
     } finally {
       this.#uiBlocker.unblock();
     }
