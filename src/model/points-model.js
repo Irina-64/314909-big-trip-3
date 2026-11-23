@@ -13,28 +13,16 @@ export default class PointsModel extends Observable {
   }
 
   async init() {
-    try {
-      const points = await this.#apiService.getPoints();
-      this.#points = points.map(PointsModel.adaptToClient);
-    } catch {
-      this.#points = [];
-    }
+    const points = await this.#apiService.getPoints();
+    this.#points = points.map(PointsModel.adaptToClient);
   }
 
   async initDestinations() {
-    try {
-      this.#destinations = await this.#apiService.getDestinations();
-    } catch {
-      this.#destinations = [];
-    }
+    this.#destinations = await this.#apiService.getDestinations();
   }
 
   async initOffers() {
-    try {
-      this.#offers = await this.#apiService.getOffers();
-    } catch {
-      this.#offers = [];
-    }
+    this.#offers = await this.#apiService.getOffers();
   }
 
   get points() {

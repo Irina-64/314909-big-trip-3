@@ -2,6 +2,7 @@ import {render, remove} from '../framework/render.js';
 import PointListView from '../view/point-list-view.js';
 import SortView from '../view/sort-view.js';
 import EmptyListView from '../view/empty-list-view.js';
+import FailedLoadDataView from '../view/failed-load-data-view.js';
 import PointPresenter from './point-presenter.js';
 import {generateSort} from '../mock/sort.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
@@ -27,6 +28,7 @@ export default class TripPresenter {
 
   #sortComponent = null;
   #emptyListComponent = null;
+  #failedLoadDataComponent = null;
 
   #pointPresenters = new Map();
   #newPointPresenter = null;
@@ -49,6 +51,12 @@ export default class TripPresenter {
     }
 
     this.#renderTrip();
+  }
+
+  showLoadingError() {
+    this.#container.querySelector('.trip-events__msg')?.remove();
+    this.#failedLoadDataComponent = new FailedLoadDataView();
+    render(this.#failedLoadDataComponent, this.#container);
   }
 
   createPoint() {
@@ -94,10 +102,11 @@ export default class TripPresenter {
 
     render(this.#sortComponent, this.#container);
     render(this.#pointListComponent, this.#container);
-    this.#renderPoints(points);
+    this.#renderPoints();
   }
 
-  #renderPoints(points) {
+  #renderPoints() {
+    const points = filter[this.#filterModel.filter](this.#pointsModel.points);
     const sortedPoints = sort[this.#currentSortType](points);
 
     for (const point of sortedPoints) {
@@ -116,9 +125,11 @@ export default class TripPresenter {
     remove(this.#sortComponent);
     remove(this.#pointListComponent);
     remove(this.#emptyListComponent);
+    remove(this.#failedLoadDataComponent);
     this.#sortComponent = null;
     this.#pointListComponent = null;
     this.#emptyListComponent = null;
+    this.#failedLoadDataComponent = null;
     this.#pointPresenters.clear();
   }
 

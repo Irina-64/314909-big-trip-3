@@ -16,6 +16,8 @@ const BLANK_POINT = {
   isDeleting: false,
 };
 
+const END_DATE_PICKER_INDEX = 1;
+
 function createTypeListTemplate(currentType, isDisabled) {
   return POINT_TYPES.map((type) => (
     `<div class="event__type-item">
@@ -159,10 +161,10 @@ function createEditFormTemplate(point, destinations, offersByType) {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(dateFrom, DateFormat.FORM_DATE_TIME)}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(dateFrom, DateFormat.FORM_DATE_TIME)}" required ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(dateTo, DateFormat.FORM_DATE_TIME)}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(dateTo, DateFormat.FORM_DATE_TIME)}" required ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -170,7 +172,7 @@ function createEditFormTemplate(point, destinations, offersByType) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}" min="0" step="1" required ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}" min="1" step="1" required ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
@@ -269,7 +271,19 @@ export default class EditFormView extends AbstractStatefulView {
   };
 
   #dateFromChangeHandler = ([selectedDate]) => {
-    this._setState({dateFrom: selectedDate?.toISOString() ?? null});
+    const dateFrom = selectedDate?.toISOString() ?? null;
+    const endDatePicker = this.#datePickers[END_DATE_PICKER_INDEX];
+    const [dateTo] = endDatePicker.selectedDates;
+
+    endDatePicker.set('minDate', selectedDate ?? null);
+
+    if (selectedDate && dateTo && selectedDate > dateTo) {
+      endDatePicker.setDate(selectedDate);
+      this._setState({dateFrom, dateTo: dateFrom});
+      return;
+    }
+
+    this._setState({dateFrom});
   };
 
   #dateToChangeHandler = ([selectedDate]) => {
@@ -308,6 +322,7 @@ export default class EditFormView extends AbstractStatefulView {
       flatpickr(this.element.querySelector('[name="event-end-time"]'), {
         ...commonOptions,
         defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
         onChange: this.#dateToChangeHandler,
       }),
     ];
