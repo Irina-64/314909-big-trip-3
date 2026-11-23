@@ -29,6 +29,7 @@ newEventButton.addEventListener('click', () => tripPresenter.createPoint());
 
 async function bootstrap() {
   await pointsModel.init();
+  await pointsModel.initDestinations();
 
   filterPresenter.init();
   tripPresenter.init();

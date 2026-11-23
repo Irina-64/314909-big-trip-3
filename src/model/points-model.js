@@ -21,6 +21,14 @@ export default class PointsModel extends Observable {
     }
   }
 
+  async initDestinations() {
+    try {
+      this.#destinations = await this.#apiService.getDestinations();
+    } catch {
+      this.#destinations = [];
+    }
+  }
+
   get points() {
     return this.#points;
   }
