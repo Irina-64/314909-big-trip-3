@@ -1,9 +1,6 @@
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
 import he from 'he';
 import {DateFormat, FilterType, POINT_TYPES, SortType} from './const.js';
-
-dayjs.extend(duration);
 
 const MINUTES_IN_HOUR = 60;
 const MINUTES_IN_DAY = 1440;
