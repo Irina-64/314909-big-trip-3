@@ -106,7 +106,7 @@ export default class PointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleFormSubmit = (point) => {
+  #handleFormSubmit = async (point) => {
     if (this.#isNewPoint) {
       this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, {
         ...point,
@@ -116,7 +116,7 @@ export default class PointPresenter {
       return;
     }
 
-    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, point);
+    await this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, point);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 

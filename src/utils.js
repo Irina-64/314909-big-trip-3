@@ -7,17 +7,6 @@ dayjs.extend(duration);
 const MINUTES_IN_HOUR = 60;
 const MINUTES_IN_DAY = 1440;
 
-function getRandomInteger(min, max) {
-  const lower = Math.ceil(Math.min(min, max));
-  const upper = Math.floor(Math.max(min, max));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-}
-
-function getRandomArrayElement(items) {
-  return items[getRandomInteger(0, items.length - 1)];
-}
-
 function formatDate(date, format) {
   return date ? dayjs(date).format(format) : '';
 }
@@ -76,4 +65,4 @@ const sort = {
   [SortType.PRICE]: (points) => points.sort((pointA, pointB) => pointB.basePrice - pointA.basePrice),
 };
 
-export {getRandomInteger, getRandomArrayElement, formatDate, getDuration, capitalize, filter, sort};
+export {formatDate, getDuration, capitalize, filter, sort};

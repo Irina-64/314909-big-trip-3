@@ -27,6 +27,7 @@ export default class FilterPresenter {
     });
 
     if (previousFilterComponent === null) {
+      this.#filterContainer.querySelector('.trip-filters')?.remove();
       render(this.#filterComponent, this.#filterContainer);
       return;
     }
