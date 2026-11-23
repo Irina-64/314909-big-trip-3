@@ -85,14 +85,15 @@ export default class PointPresenter {
   }
 
   setAborting() {
-    if (!this.#isEditMode) {
+    if (this.#isEditMode) {
+      this.#editFormComponent.shake(() => this.#editFormComponent.updateElement({
+        isSaving: false,
+        isDeleting: false,
+      }));
       return;
     }
 
-    this.#editFormComponent.shake(() => this.#editFormComponent.updateElement({
-      isSaving: false,
-      isDeleting: false,
-    }));
+    this.#pointComponent.shake();
   }
 
   destroy() {
