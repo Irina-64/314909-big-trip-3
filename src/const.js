@@ -36,6 +36,11 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 const EmptyListMessage = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
   [FilterType.FUTURE]: 'There are no future events now',
@@ -43,4 +48,4 @@ const EmptyListMessage = {
   [FilterType.PAST]: 'There are no past events now',
 };
 
-export {POINT_TYPES, DateFormat, FilterType, SortType, DISABLED_SORT_TYPES, UserAction, UpdateType, EmptyListMessage};
+export {POINT_TYPES, DateFormat, FilterType, SortType, DISABLED_SORT_TYPES, UserAction, UpdateType, TimeLimit, EmptyListMessage};

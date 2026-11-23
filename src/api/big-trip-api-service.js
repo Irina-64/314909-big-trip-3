@@ -25,4 +25,21 @@ export default class BigTripApiService extends ApiService {
     })
       .then(ApiService.parseResponse);
   }
+
+  addPoint(point) {
+    return this._load({
+      url: 'points',
+      method: 'POST',
+      body: JSON.stringify(point),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(ApiService.parseResponse);
+  }
+
+  deletePoint(point) {
+    return this._load({
+      url: `points/${point.id}`,
+      method: 'DELETE',
+    });
+  }
 }
