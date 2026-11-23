@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {DateFormat} from '../const.js';
-import {formatDate, getDuration, capitalize, encodeHtml, getValidPointType} from '../utils.js';
+import {formatDate, getDurationInMinutes, formatDuration, capitalize, encodeHtml, getValidPointType} from '../utils.js';
 
 function createOffersTemplate(offers) {
   if (offers.length === 0) {
@@ -53,7 +53,7 @@ function createPointTemplate(point, destination, offers) {
             >${formatDate(dateTo, DateFormat.POINT_TIME)}</time
           >
         </p>
-        <p class="event__duration">${getDuration(dateFrom, dateTo)}</p>
+        <p class="event__duration">${formatDuration(getDurationInMinutes(dateFrom, dateTo))}</p>
       </div>
       <p class="event__price">&euro;&nbsp;<span class="event__price-value">${encodeHtml(basePrice)}</span></p>
       ${createOffersTemplate(selectedOffers)}

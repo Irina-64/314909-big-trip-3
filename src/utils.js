@@ -10,8 +10,11 @@ function formatDate(date, format) {
   return date ? dayjs(date).format(format) : '';
 }
 
-function getDuration(dateFrom, dateTo) {
-  const minutes = dayjs(dateTo).diff(dateFrom, 'minute');
+function getDurationInMinutes(dateFrom, dateTo) {
+  return dayjs(dateTo).diff(dateFrom, 'minute');
+}
+
+function formatDuration(minutes) {
   const pointDuration = dayjs.duration(minutes, 'minutes');
 
   if (minutes < MINUTES_IN_HOUR) {
@@ -49,10 +52,6 @@ function isPointPresent({dateFrom, dateTo}) {
 
 function isPointPast({dateTo}) {
   return dayjs(dateTo).isBefore(dayjs());
-}
-
-function getPointDuration({dateFrom, dateTo}) {
-  return dayjs(dateTo).diff(dayjs(dateFrom));
 }
 
 function getTripRoute(destinations) {
@@ -107,13 +106,18 @@ const filter = {
 
 const sort = {
   [SortType.DAY]: (points) => points.sort((pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom))),
-  [SortType.TIME]: (points) => points.sort((pointA, pointB) => getPointDuration(pointB) - getPointDuration(pointA)),
+  [SortType.TIME]: (points) =>
+    points.sort(
+      (pointA, pointB) =>
+        getDurationInMinutes(pointB.dateFrom, pointB.dateTo) - getDurationInMinutes(pointA.dateFrom, pointA.dateTo),
+    ),
   [SortType.PRICE]: (points) => points.sort((pointA, pointB) => pointB.basePrice - pointA.basePrice),
 };
 
 export {
   formatDate,
-  getDuration,
+  getDurationInMinutes,
+  formatDuration,
   capitalize,
   encodeHtml,
   getValidPointType,
