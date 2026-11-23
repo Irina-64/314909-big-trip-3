@@ -28,6 +28,7 @@ export default class TripPresenter {
   #emptyListComponent = null;
 
   #pointPresenters = new Map();
+  #newPointPresenter = null;
 
   constructor({container, pointsModel, filterModel}) {
     this.#container = container;
@@ -40,6 +41,31 @@ export default class TripPresenter {
 
   init() {
     this.#renderTrip();
+  }
+
+  createPoint() {
+    if (this.#newPointPresenter !== null) {
+      return;
+    }
+
+    this.#filterModel.filter = FilterType.EVERYTHING;
+    this.#currentSortType = SortType.DAY;
+    this.#handleModeChange();
+
+    if (this.#pointListComponent === null) {
+      remove(this.#emptyListComponent);
+      this.#pointListComponent = new PointListView();
+      render(this.#pointListComponent, this.#container);
+    }
+
+    this.#newPointPresenter = new PointPresenter({
+      pointListContainer: this.#pointListComponent.element,
+      pointsModel: this.#pointsModel,
+      onDataChange: this.#handleViewAction,
+      onModeChange: this.#handleModeChange,
+      onDestroy: this.#handleNewPointFormClose,
+    });
+    this.#newPointPresenter.init();
   }
 
   #renderTrip() {
@@ -113,6 +139,20 @@ export default class TripPresenter {
 
   #handleModeChange = () => {
     this.#pointPresenters.forEach((pointPresenter) => pointPresenter.resetView());
+
+    if (this.#newPointPresenter !== null) {
+      this.#newPointPresenter.destroy();
+      this.#newPointPresenter = null;
+    }
+  };
+
+  #handleNewPointFormClose = () => {
+    if (this.#newPointPresenter === null) {
+      return;
+    }
+
+    this.#newPointPresenter.destroy();
+    this.#newPointPresenter = null;
   };
 
   #handlePointsModelEvent = (updateType, data) => {

@@ -5,6 +5,7 @@ import FilterModel from './model/filter-model.js';
 
 const filterContainer = document.querySelector('.trip-controls__filters');
 const tripEventsContainer = document.querySelector('.trip-events');
+const newEventButton = document.querySelector('.trip-main__event-add-btn');
 
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
@@ -21,3 +22,5 @@ const filterPresenter = new FilterPresenter({
 
 filterPresenter.init();
 tripPresenter.init();
+
+newEventButton.addEventListener('click', () => tripPresenter.createPoint());
