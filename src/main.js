@@ -5,7 +5,7 @@ import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import BigTripApiService from './api/big-trip-api-service.js';
 
-const END_POINT = 'https://21.objects.pages.academy/big-trip';
+const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
 const AUTHORIZATION = 'Basic c7v2n5k9m4q8x1z6';
 
 const filterContainer = document.querySelector('.trip-controls__filters');
