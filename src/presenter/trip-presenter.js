@@ -29,6 +29,7 @@ export default class TripPresenter {
 
   #pointPresenters = new Map();
   #newPointPresenter = null;
+  #isInitialized = false;
 
   constructor({container, pointsModel, filterModel}) {
     this.#container = container;
@@ -40,6 +41,11 @@ export default class TripPresenter {
   }
 
   init() {
+    if (!this.#isInitialized) {
+      this.#container.querySelector('.trip-events__msg')?.remove();
+      this.#isInitialized = true;
+    }
+
     this.#renderTrip();
   }
 

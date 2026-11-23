@@ -25,7 +25,14 @@ const filterPresenter = new FilterPresenter({
   filterModel,
 });
 
-filterPresenter.init();
-tripPresenter.init();
-
 newEventButton.addEventListener('click', () => tripPresenter.createPoint());
+
+async function bootstrap() {
+  await pointsModel.init();
+
+  filterPresenter.init();
+  tripPresenter.init();
+  newEventButton.disabled = false;
+}
+
+bootstrap();
