@@ -46,7 +46,7 @@ function createOffersTemplate(offers, selectedOfferIds) {
 
       <div class="event__available-offers">
         ${offers.map(({id, title, price}) => `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" ${selectedOfferIds.includes(id) ? 'checked' : ''}>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" data-offer-id="${id}" ${selectedOfferIds.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="event-offer-${id}">
             <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
@@ -140,7 +140,7 @@ function createEditFormTemplate(point, destinations, offersByType) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${capitalize(type)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination?.name ?? ''}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination?.name ?? ''}" list="destination-list-1" required>
             <datalist id="destination-list-1">
               ${createDestinationListTemplate(destinations)}
             </datalist>
@@ -159,7 +159,7 @@ function createEditFormTemplate(point, destinations, offersByType) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}" min="0" step="1" required>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -178,14 +178,16 @@ export default class EditFormView extends AbstractStatefulView {
   #datePickers = [];
   #handleFormSubmit = null;
   #handleRollupClick = null;
+  #handleDeleteClick = null;
 
-  constructor({point = BLANK_POINT, offersByType = [], destinations = [], onFormSubmit, onRollupClick}) {
+  constructor({point = BLANK_POINT, offersByType = [], destinations = [], onFormSubmit, onRollupClick, onDeleteClick}) {
     super();
     this._state = {...point};
     this.#offersByType = offersByType;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
+    this.#handleDeleteClick = onDeleteClick;
 
     this.#setEventListeners();
     this.#setDatePickers();
@@ -202,12 +204,26 @@ export default class EditFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+
+    const formData = new FormData(evt.target);
+    const selectedOffers = [...this.element.querySelectorAll('.event__offer-checkbox:checked')]
+      .map((offerInput) => offerInput.dataset.offerId);
+
+    this.#handleFormSubmit({
+      ...this._state,
+      basePrice: Number(formData.get('event-price')),
+      offers: selectedOffers,
+    });
   };
 
   #rollupButtonClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleRollupClick();
+  };
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(this._state);
   };
 
   #typeChangeHandler = (evt) => {
@@ -223,6 +239,12 @@ export default class EditFormView extends AbstractStatefulView {
     this.updateElement({destination: destination?.id ?? null});
   };
 
+  #destinationInputHandler = (evt) => {
+    const isDestinationValid = this.#destinations.some(({name}) => name === evt.target.value);
+
+    evt.target.setCustomValidity(isDestinationValid ? '' : 'Select a destination from the list');
+  };
+
   #dateFromChangeHandler = ([selectedDate]) => {
     this._setState({dateFrom: selectedDate?.toISOString() ?? null});
   };
@@ -236,10 +258,14 @@ export default class EditFormView extends AbstractStatefulView {
       .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       ?.addEventListener('click', this.#rollupButtonClickHandler);
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#deleteButtonClickHandler);
     this.element.querySelectorAll('.event__type-input')
       .forEach((typeInput) => typeInput.addEventListener('change', this.#typeChangeHandler));
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('input', this.#destinationInputHandler);
   }
 
   #setDatePickers() {
