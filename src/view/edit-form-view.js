@@ -2,7 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import {POINT_TYPES, DateFormat} from '../const.js';
-import {formatDate, capitalize} from '../utils.js';
+import {formatDate, capitalize, encodeHtml, getValidPointType} from '../utils.js';
 
 const BLANK_POINT = {
   type: 'flight',
@@ -28,7 +28,7 @@ function createTypeListTemplate(currentType, isDisabled) {
 }
 
 function createDestinationListTemplate(destinations) {
-  return destinations.map(({name}) => `<option value="${name}"></option>`).join('');
+  return destinations.map(({name}) => `<option value="${encodeHtml(name)}"></option>`).join('');
 }
 
 function getDestinationById(destinations, destinationId) {
@@ -50,11 +50,11 @@ function createOffersTemplate(offers, selectedOfferIds, isDisabled) {
 
       <div class="event__available-offers">
         ${offers.map(({id, title, price}) => `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" data-offer-id="${id}" ${selectedOfferIds.includes(id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
-          <label class="event__offer-label" for="event-offer-${id}">
-            <span class="event__offer-title">${title}</span>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${encodeHtml(id)}" type="checkbox" name="event-offer-${encodeHtml(id)}" data-offer-id="${encodeHtml(id)}" ${selectedOfferIds.includes(id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+          <label class="event__offer-label" for="event-offer-${encodeHtml(id)}">
+            <span class="event__offer-title">${encodeHtml(title)}</span>
             &plus;&euro;&nbsp;
-            <span class="event__offer-price">${price}</span>
+            <span class="event__offer-price">${encodeHtml(price)}</span>
           </label>
         </div>`).join('')}
       </div>
@@ -70,7 +70,7 @@ function createPicturesTemplate(pictures) {
   return (
     `<div class="event__photos-container">
       <div class="event__photos-tape">
-        ${pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join('')}
+        ${pictures.map(({src, description}) => `<img class="event__photo" src="${encodeHtml(src)}" alt="${encodeHtml(description)}">`).join('')}
       </div>
     </div>`
   );
@@ -84,7 +84,7 @@ function createDestinationTemplate(destination) {
   return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      ${destination.description ? `<p class="event__destination-description">${destination.description}</p>` : ''}
+      ${destination.description ? `<p class="event__destination-description">${encodeHtml(destination.description)}</p>` : ''}
       ${createPicturesTemplate(destination.pictures)}
     </section>`
   );
@@ -125,10 +125,11 @@ function getResetButtonText(isNewPoint, isDeleting) {
 
 function createEditFormTemplate(point, destinations, offersByType) {
   const {type, dateFrom, dateTo, basePrice, isSaving = false, isDeleting = false} = point;
+  const validPointType = getValidPointType(type);
   const isNewPoint = !point.id;
   const isDisabled = isSaving || isDeleting;
   const destination = getDestinationById(destinations, point.destination);
-  const offers = getOffersByType(offersByType, type);
+  const offers = getOffersByType(offersByType, validPointType);
 
   return (
     `<li class="trip-events__item">
@@ -137,23 +138,23 @@ function createEditFormTemplate(point, destinations, offersByType) {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${validPointType}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${createTypeListTemplate(type, isDisabled)}
+                ${createTypeListTemplate(validPointType, isDisabled)}
               </fieldset>
             </div>
           </div>
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${capitalize(type)}
+              ${capitalize(validPointType)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination?.name ?? ''}" list="destination-list-1" required ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${encodeHtml(destination?.name)}" list="destination-list-1" required ${isDisabled ? 'disabled' : ''}>
             <datalist id="destination-list-1">
               ${createDestinationListTemplate(destinations)}
             </datalist>
@@ -172,7 +173,7 @@ function createEditFormTemplate(point, destinations, offersByType) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}" min="1" step="1" required ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${encodeHtml(basePrice)}" min="1" step="1" required ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import {DateFormat, FilterType, SortType} from './const.js';
+import he from 'he';
+import {DateFormat, FilterType, POINT_TYPES, SortType} from './const.js';
 
 dayjs.extend(duration);
 
@@ -29,6 +30,14 @@ function getDuration(dateFrom, dateTo) {
 
 function capitalize(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function encodeHtml(value) {
+  return he.encode(String(value ?? ''));
+}
+
+function getValidPointType(type) {
+  return POINT_TYPES.includes(type) ? type : POINT_TYPES[0];
 }
 
 function isPointFuture({dateFrom}) {
@@ -111,4 +120,4 @@ const sort = {
   [SortType.PRICE]: (points) => points.sort((pointA, pointB) => pointB.basePrice - pointA.basePrice),
 };
 
-export {formatDate, getDuration, capitalize, getTripRoute, getTripDates, getTotalPrice, sortPointsByDate, filter, sort};
+export {formatDate, getDuration, capitalize, encodeHtml, getValidPointType, getTripRoute, getTripDates, getTotalPrice, sortPointsByDate, filter, sort};

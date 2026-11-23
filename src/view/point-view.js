@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {DateFormat} from '../const.js';
-import {formatDate, getDuration, capitalize} from '../utils.js';
+import {formatDate, getDuration, capitalize, encodeHtml, getValidPointType} from '../utils.js';
 
 function createOffersTemplate(offers) {
   if (offers.length === 0) {
@@ -11,9 +11,9 @@ function createOffersTemplate(offers) {
     `<h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
       ${offers.map(({title, price}) => `<li class="event__offer">
-        <span class="event__offer-title">${title}</span>
+        <span class="event__offer-title">${encodeHtml(title)}</span>
         &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
+        <span class="event__offer-price">${encodeHtml(price)}</span>
       </li>`).join('')}
     </ul>`
   );
@@ -21,6 +21,7 @@ function createOffersTemplate(offers) {
 
 function createPointTemplate(point, destination, offers) {
   const {type, dateFrom, dateTo, basePrice, isFavorite} = point;
+  const validPointType = getValidPointType(type);
   const selectedOffers = offers.filter((offer) => point.offers.includes(offer.id));
   const favoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
@@ -29,9 +30,9 @@ function createPointTemplate(point, destination, offers) {
       <div class="event">
         <time class="event__date" datetime="${formatDate(dateFrom, 'YYYY-MM-DD')}">${formatDate(dateFrom, DateFormat.POINT_DAY).toUpperCase()}</time>
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${validPointType}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${capitalize(type)} ${destination?.name ?? ''}</h3>
+        <h3 class="event__title">${capitalize(validPointType)} ${encodeHtml(destination?.name)}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${formatDate(dateFrom, 'YYYY-MM-DDTHH:mm')}">${formatDate(dateFrom, DateFormat.POINT_TIME)}</time>
@@ -41,7 +42,7 @@ function createPointTemplate(point, destination, offers) {
           <p class="event__duration">${getDuration(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
+          &euro;&nbsp;<span class="event__price-value">${encodeHtml(basePrice)}</span>
         </p>
         ${createOffersTemplate(selectedOffers)}
         <button class="event__favorite-btn ${favoriteClassName}" type="button">
