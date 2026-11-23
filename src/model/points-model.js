@@ -89,12 +89,14 @@ export default class PointsModel extends Observable {
     this._notify(updateType, addedPoint);
   }
 
-  deletePoint(updateType, point) {
+  async deletePoint(updateType, point) {
     const pointIndex = this.#points.findIndex(({id}) => id === point.id);
 
     if (pointIndex === -1) {
       throw new Error('Can\'t delete unexisting point');
     }
+
+    await this.#apiService.deletePoint(point);
 
     this.#points = [
       ...this.#points.slice(0, pointIndex),
