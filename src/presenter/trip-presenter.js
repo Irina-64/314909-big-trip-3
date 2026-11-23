@@ -4,7 +4,8 @@ import SortView from '../view/sort-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import PointPresenter from './point-presenter.js';
 import {generateSort} from '../mock/sort.js';
-import {FilterType, SortType, UpdateType, UserAction} from '../const.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+import {FilterType, SortType, TimeLimit, UpdateType, UserAction} from '../const.js';
 import {filter, sort} from '../utils.js';
 
 export default class TripPresenter {
@@ -30,6 +31,7 @@ export default class TripPresenter {
   #pointPresenters = new Map();
   #newPointPresenter = null;
   #isInitialized = false;
+  #uiBlocker = new UiBlocker(TimeLimit);
 
   constructor({container, pointsModel, filterModel}) {
     this.#container = container;
@@ -132,14 +134,23 @@ export default class TripPresenter {
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
-    switch (actionType) {
-      case UserAction.UPDATE_POINT:
-        return this.#pointsModel.updatePoint(updateType, update);
-      case UserAction.ADD_POINT:
-        return this.#pointsModel.addPoint(updateType, update);
-      case UserAction.DELETE_POINT:
-        return this.#pointsModel.deletePoint(updateType, update);
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
+    try {
+      switch (actionType) {
+        case UserAction.UPDATE_POINT:
+          await this.#pointsModel.updatePoint(updateType, update);
+          break;
+        case UserAction.ADD_POINT:
+          await this.#pointsModel.addPoint(updateType, update);
+          break;
+        case UserAction.DELETE_POINT:
+          await this.#pointsModel.deletePoint(updateType, update);
+          break;
+      }
+    } finally {
+      this.#uiBlocker.unblock();
     }
   };
 
