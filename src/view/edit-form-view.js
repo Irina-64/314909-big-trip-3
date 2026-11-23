@@ -46,7 +46,7 @@ function createOffersTemplate(offers, selectedOfferIds) {
 
       <div class="event__available-offers">
         ${offers.map(({id, title, price}) => `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" ${selectedOfferIds.includes(id) ? 'checked' : ''}>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" data-offer-id="${id}" ${selectedOfferIds.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="event-offer-${id}">
             <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
@@ -204,7 +204,16 @@ export default class EditFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this._state);
+
+    const formData = new FormData(evt.target);
+    const selectedOffers = [...this.element.querySelectorAll('.event__offer-checkbox:checked')]
+      .map((offerInput) => offerInput.dataset.offerId);
+
+    this.#handleFormSubmit({
+      ...this._state,
+      basePrice: Number(formData.get('event-price')),
+      offers: selectedOffers,
+    });
   };
 
   #rollupButtonClickHandler = (evt) => {
