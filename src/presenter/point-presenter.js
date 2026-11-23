@@ -1,6 +1,7 @@
 import {render, replace} from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import EditFormView from '../view/edit-form-view.js';
+import {UpdateType, UserAction} from '../const.js';
 
 export default class PointPresenter {
   #pointListContainer = null;
@@ -94,7 +95,11 @@ export default class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {...this.#point, isFavorite: !this.#point.isFavorite},
+    );
   };
 
   #escKeyDownHandler = (evt) => {

@@ -24,6 +24,18 @@ const SortType = {
 
 const DISABLED_SORT_TYPES = [SortType.EVENT, SortType.OFFERS];
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 const EmptyListMessage = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
   [FilterType.FUTURE]: 'There are no future events now',
@@ -31,4 +43,4 @@ const EmptyListMessage = {
   [FilterType.PAST]: 'There are no past events now',
 };
 
-export {POINT_TYPES, DateFormat, FilterType, SortType, DISABLED_SORT_TYPES, EmptyListMessage};
+export {POINT_TYPES, DateFormat, FilterType, SortType, DISABLED_SORT_TYPES, UserAction, UpdateType, EmptyListMessage};

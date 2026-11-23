@@ -4,7 +4,7 @@ import SortView from '../view/sort-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import PointPresenter from './point-presenter.js';
 import {generateSort} from '../mock/sort.js';
-import {FilterType, SortType} from '../const.js';
+import {FilterType, SortType, UpdateType, UserAction} from '../const.js';
 import {filter, sort} from '../utils.js';
 
 export default class TripPresenter {
@@ -89,7 +89,7 @@ export default class TripPresenter {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
       pointsModel: this.#pointsModel,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
 
@@ -97,17 +97,27 @@ export default class TripPresenter {
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  #handlePointChange = (updatedPoint) => {
-    this.#pointsModel.updatePoint(updatedPoint);
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
   };
 
   #handleModeChange = () => {
     this.#pointPresenters.forEach((pointPresenter) => pointPresenter.resetView());
   };
 
-  #handlePointsModelEvent = (updatedPoint) => {
-    if (updatedPoint) {
-      this.#pointPresenters.get(updatedPoint.id)?.init(updatedPoint);
+  #handlePointsModelEvent = (updateType, data) => {
+    if (updateType === UpdateType.PATCH) {
+      this.#pointPresenters.get(data.id)?.init(data);
       return;
     }
 
