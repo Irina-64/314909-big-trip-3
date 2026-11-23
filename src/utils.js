@@ -67,9 +67,7 @@ function getTripRoute(destinations) {
 }
 
 function sortPointsByDate(points) {
-  return [...points].sort((pointA, pointB) => (
-    dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom))
-  ));
+  return [...points].sort((pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom)));
 }
 
 function getTripDates(points) {
@@ -111,13 +109,21 @@ const filter = {
 };
 
 const sort = {
-  [SortType.DAY]: (points) => points.sort((pointA, pointB) => (
-    dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom))
-  )),
-  [SortType.TIME]: (points) => points.sort((pointA, pointB) => (
-    getPointDuration(pointB) - getPointDuration(pointA)
-  )),
+  [SortType.DAY]: (points) => points.sort((pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom))),
+  [SortType.TIME]: (points) => points.sort((pointA, pointB) => getPointDuration(pointB) - getPointDuration(pointA)),
   [SortType.PRICE]: (points) => points.sort((pointA, pointB) => pointB.basePrice - pointA.basePrice),
 };
 
-export {formatDate, getDuration, capitalize, encodeHtml, getValidPointType, getTripRoute, getTripDates, getTotalPrice, sortPointsByDate, filter, sort};
+export {
+  formatDate,
+  getDuration,
+  capitalize,
+  encodeHtml,
+  getValidPointType,
+  getTripRoute,
+  getTripDates,
+  getTotalPrice,
+  sortPointsByDate,
+  filter,
+  sort,
+};

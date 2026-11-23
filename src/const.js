@@ -50,4 +50,14 @@ const EmptyListMessage = {
   [FilterType.PAST]: 'There are no past events now',
 };
 
-export {POINT_TYPES, DateFormat, FilterType, SortType, DISABLED_SORT_TYPES, UserAction, UpdateType, TimeLimit, EmptyListMessage};
+export {
+  POINT_TYPES,
+  DateFormat,
+  FilterType,
+  SortType,
+  DISABLED_SORT_TYPES,
+  UserAction,
+  UpdateType,
+  TimeLimit,
+  EmptyListMessage,
+};

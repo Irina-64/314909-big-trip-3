@@ -54,17 +54,13 @@ export default class PointsModel extends Observable {
     const pointIndex = this.#points.findIndex(({id}) => id === updatedPoint.id);
 
     if (pointIndex === -1) {
-      throw new Error('Can\'t update unexisting point');
+      throw new Error("Can't update unexisting point");
     }
 
     const response = await this.#apiService.updatePoint(PointsModel.adaptToServer(updatedPoint));
     const point = PointsModel.adaptToClient(response);
 
-    this.#points = [
-      ...this.#points.slice(0, pointIndex),
-      point,
-      ...this.#points.slice(pointIndex + 1),
-    ];
+    this.#points = [...this.#points.slice(0, pointIndex), point, ...this.#points.slice(pointIndex + 1)];
 
     this._notify(updateType, point);
   }
@@ -81,15 +77,12 @@ export default class PointsModel extends Observable {
     const pointIndex = this.#points.findIndex(({id}) => id === point.id);
 
     if (pointIndex === -1) {
-      throw new Error('Can\'t delete unexisting point');
+      throw new Error("Can't delete unexisting point");
     }
 
     await this.#apiService.deletePoint(point);
 
-    this.#points = [
-      ...this.#points.slice(0, pointIndex),
-      ...this.#points.slice(pointIndex + 1),
-    ];
+    this.#points = [...this.#points.slice(0, pointIndex), ...this.#points.slice(pointIndex + 1)];
 
     this._notify(updateType, point);
   }
@@ -114,10 +107,10 @@ export default class PointsModel extends Observable {
   static adaptToServer(point) {
     const adaptedPoint = {
       ...point,
-      'base_price': point.basePrice,
-      'date_from': point.dateFrom,
-      'date_to': point.dateTo,
-      'is_favorite': point.isFavorite,
+      base_price: point.basePrice,
+      date_from: point.dateFrom,
+      date_to: point.dateTo,
+      is_favorite: point.isFavorite,
     };
 
     delete adaptedPoint.basePrice;
