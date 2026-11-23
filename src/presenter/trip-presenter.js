@@ -94,10 +94,11 @@ export default class TripPresenter {
 
     render(this.#sortComponent, this.#container);
     render(this.#pointListComponent, this.#container);
-    this.#renderPoints(points);
+    this.#renderPoints();
   }
 
-  #renderPoints(points) {
+  #renderPoints() {
+    const points = filter[this.#filterModel.filter](this.#pointsModel.points);
     const sortedPoints = sort[this.#currentSortType](points);
 
     for (const point of sortedPoints) {
