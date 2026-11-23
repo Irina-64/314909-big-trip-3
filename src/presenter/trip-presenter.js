@@ -1,9 +1,10 @@
 import {render, remove} from '../framework/render.js';
 import PointListView from '../view/point-list-view.js';
 import SortView from '../view/sort-view.js';
+import EmptyListView from '../view/empty-list-view.js';
 import PointPresenter from './point-presenter.js';
 import {generateSort} from '../mock/sort.js';
-import {SortType} from '../const.js';
+import {FilterType, SortType} from '../const.js';
 import {filter, sort} from '../utils.js';
 
 export default class TripPresenter {
@@ -24,6 +25,7 @@ export default class TripPresenter {
   };
 
   #sortComponent = null;
+  #emptyListComponent = null;
 
   #pointPresenters = new Map();
 
@@ -41,6 +43,14 @@ export default class TripPresenter {
   }
 
   #renderTrip() {
+    const points = filter[this.#filterModel.filter](this.#pointsModel.points);
+
+    if (points.length === 0) {
+      this.#emptyListComponent = new EmptyListView({filterType: this.#filterModel.filter ?? FilterType.EVERYTHING});
+      render(this.#emptyListComponent, this.#container);
+      return;
+    }
+
     this.#sortComponent = new SortView({
       sortItems: generateSort(),
       currentSortType: this.#currentSortType,
@@ -50,11 +60,10 @@ export default class TripPresenter {
 
     render(this.#sortComponent, this.#container);
     render(this.#pointListComponent, this.#container);
-    this.#renderPoints();
+    this.#renderPoints(points);
   }
 
-  #renderPoints() {
-    const points = filter[this.#filterModel.filter](this.#pointsModel.points);
+  #renderPoints(points) {
     const sortedPoints = sort[this.#currentSortType](points);
 
     for (const point of sortedPoints) {
@@ -72,6 +81,7 @@ export default class TripPresenter {
     this.#handleModeChange();
     remove(this.#sortComponent);
     remove(this.#pointListComponent);
+    remove(this.#emptyListComponent);
     this.#pointPresenters.clear();
   }
 
