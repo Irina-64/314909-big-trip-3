@@ -178,14 +178,16 @@ export default class EditFormView extends AbstractStatefulView {
   #datePickers = [];
   #handleFormSubmit = null;
   #handleRollupClick = null;
+  #handleDeleteClick = null;
 
-  constructor({point = BLANK_POINT, offersByType = [], destinations = [], onFormSubmit, onRollupClick}) {
+  constructor({point = BLANK_POINT, offersByType = [], destinations = [], onFormSubmit, onRollupClick, onDeleteClick}) {
     super();
     this._state = {...point};
     this.#offersByType = offersByType;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
+    this.#handleDeleteClick = onDeleteClick;
 
     this.#setEventListeners();
     this.#setDatePickers();
@@ -208,6 +210,11 @@ export default class EditFormView extends AbstractStatefulView {
   #rollupButtonClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleRollupClick();
+  };
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(this._state);
   };
 
   #typeChangeHandler = (evt) => {
@@ -236,6 +243,8 @@ export default class EditFormView extends AbstractStatefulView {
       .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       ?.addEventListener('click', this.#rollupButtonClickHandler);
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#deleteButtonClickHandler);
     this.element.querySelectorAll('.event__type-input')
       .forEach((typeInput) => typeInput.addEventListener('change', this.#typeChangeHandler));
     this.element.querySelector('.event__input--destination')

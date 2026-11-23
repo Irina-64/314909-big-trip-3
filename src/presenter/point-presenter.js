@@ -44,6 +44,7 @@ export default class PointPresenter {
       destinations: this.#pointsModel.destinations,
       onFormSubmit: this.#handleFormSubmit,
       onRollupClick: this.#handleRollupClick,
+      onDeleteClick: this.#handleDeleteClick,
     });
 
     if (previousPointComponent === null || previousEditFormComponent === null) {
@@ -92,6 +93,10 @@ export default class PointPresenter {
   #handleRollupClick = () => {
     this.#replaceFormToPoint();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
   };
 
   #handleFavoriteClick = () => {
