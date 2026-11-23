@@ -2,11 +2,19 @@ import {render, remove} from '../framework/render.js';
 import PointListView from '../view/point-list-view.js';
 import SortView from '../view/sort-view.js';
 import EmptyListView from '../view/empty-list-view.js';
-import FailedLoadDataView from '../view/failed-load-data-view.js';
 import PointPresenter from './point-presenter.js';
 import {generateSort} from '../mock/sort.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
-import {FilterType, SortType, TimeLimit, UpdateType, UserAction} from '../const.js';
+import {
+  EmptyListMessage,
+  FailedLoadingMessage,
+  FilterType,
+  LoadingMessage,
+  SortType,
+  TimeLimit,
+  UpdateType,
+  UserAction,
+} from '../const.js';
 import {filter, sort} from '../utils.js';
 
 export default class TripPresenter {
@@ -28,7 +36,6 @@ export default class TripPresenter {
 
   #sortComponent = null;
   #emptyListComponent = null;
-  #failedLoadDataComponent = null;
 
   #pointPresenters = new Map();
   #newPointPresenter = null;
@@ -46,17 +53,20 @@ export default class TripPresenter {
 
   init() {
     if (!this.#isInitialized) {
-      this.#container.querySelector('.trip-events__msg')?.remove();
+      remove(this.#emptyListComponent);
+      this.#emptyListComponent = null;
       this.#isInitialized = true;
     }
 
     this.#renderTrip();
   }
 
+  showLoading() {
+    this.#showMessage(LoadingMessage);
+  }
+
   showLoadingError() {
-    this.#container.querySelector('.trip-events__msg')?.remove();
-    this.#failedLoadDataComponent = new FailedLoadDataView();
-    render(this.#failedLoadDataComponent, this.#container);
+    this.#showMessage(FailedLoadingMessage);
   }
 
   createPoint() {
@@ -70,6 +80,7 @@ export default class TripPresenter {
 
     if (this.#pointListComponent === null) {
       remove(this.#emptyListComponent);
+      this.#emptyListComponent = null;
       this.#pointListComponent = new PointListView();
       render(this.#pointListComponent, this.#container);
     }
@@ -88,8 +99,7 @@ export default class TripPresenter {
     const points = filter[this.#filterModel.filter](this.#pointsModel.points);
 
     if (points.length === 0) {
-      this.#emptyListComponent = new EmptyListView({filterType: this.#filterModel.filter ?? FilterType.EVERYTHING});
-      render(this.#emptyListComponent, this.#container);
+      this.#showMessage(EmptyListMessage[this.#filterModel.filter ?? FilterType.EVERYTHING]);
       return;
     }
 
@@ -114,6 +124,12 @@ export default class TripPresenter {
     }
   }
 
+  #showMessage(message) {
+    remove(this.#emptyListComponent);
+    this.#emptyListComponent = new EmptyListView({message});
+    render(this.#emptyListComponent, this.#container);
+  }
+
   #clearPointList() {
     this.#handleModeChange();
     this.#pointListComponent.element.replaceChildren();
@@ -125,11 +141,9 @@ export default class TripPresenter {
     remove(this.#sortComponent);
     remove(this.#pointListComponent);
     remove(this.#emptyListComponent);
-    remove(this.#failedLoadDataComponent);
     this.#sortComponent = null;
     this.#pointListComponent = null;
     this.#emptyListComponent = null;
-    this.#failedLoadDataComponent = null;
     this.#pointPresenters.clear();
   }
 

@@ -33,6 +33,8 @@ const tripInfoPresenter = new TripInfoPresenter({
 
 newEventButton.addEventListener('click', () => tripPresenter.createPoint());
 
+tripPresenter.showLoading();
+
 async function bootstrap() {
   try {
     await Promise.all([pointsModel.init(), pointsModel.initDestinations(), pointsModel.initOffers()]);
