@@ -140,7 +140,7 @@ function createEditFormTemplate(point, destinations, offersByType) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${capitalize(type)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination?.name ?? ''}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination?.name ?? ''}" list="destination-list-1" required>
             <datalist id="destination-list-1">
               ${createDestinationListTemplate(destinations)}
             </datalist>
@@ -239,6 +239,12 @@ export default class EditFormView extends AbstractStatefulView {
     this.updateElement({destination: destination?.id ?? null});
   };
 
+  #destinationInputHandler = (evt) => {
+    const isDestinationValid = this.#destinations.some(({name}) => name === evt.target.value);
+
+    evt.target.setCustomValidity(isDestinationValid ? '' : 'Select a destination from the list');
+  };
+
   #dateFromChangeHandler = ([selectedDate]) => {
     this._setState({dateFrom: selectedDate?.toISOString() ?? null});
   };
@@ -258,6 +264,8 @@ export default class EditFormView extends AbstractStatefulView {
       .forEach((typeInput) => typeInput.addEventListener('change', this.#typeChangeHandler));
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('input', this.#destinationInputHandler);
   }
 
   #setDatePickers() {
