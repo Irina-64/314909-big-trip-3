@@ -108,10 +108,7 @@ export default class PointPresenter {
 
   #handleFormSubmit = async (point) => {
     if (this.#isNewPoint) {
-      this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, {
-        ...point,
-        id: `point-${Date.now()}`,
-      });
+      await this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, point);
       this.#handleDestroy();
       return;
     }
