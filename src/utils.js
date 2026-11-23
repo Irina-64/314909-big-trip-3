@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import {FilterType, SortType} from './const.js';
+import {DateFormat, FilterType, SortType} from './const.js';
 
 dayjs.extend(duration);
 
 const MINUTES_IN_HOUR = 60;
 const MINUTES_IN_DAY = 1440;
+const MAX_VISIBLE_DESTINATIONS = 3;
 
 function formatDate(date, format) {
   return date ? dayjs(date).format(format) : '';
@@ -48,6 +49,51 @@ function getPointDuration({dateFrom, dateTo}) {
   return dayjs(dateTo).diff(dayjs(dateFrom));
 }
 
+function getTripRoute(destinations) {
+  if (destinations.length <= MAX_VISIBLE_DESTINATIONS) {
+    return destinations.join(' — ');
+  }
+
+  return `${destinations[0]} — ... — ${destinations[destinations.length - 1]}`;
+}
+
+function sortPointsByDate(points) {
+  return [...points].sort((pointA, pointB) => (
+    dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom))
+  ));
+}
+
+function getTripDates(points) {
+  if (points.length === 0) {
+    return '';
+  }
+
+  const sortedPoints = sortPointsByDate(points);
+  const startDate = dayjs(sortedPoints[0].dateFrom);
+  const endDate = dayjs(sortedPoints[sortedPoints.length - 1].dateTo);
+
+  if (startDate.isSame(endDate, 'day')) {
+    return startDate.format(DateFormat.TRIP_DATE);
+  }
+
+  if (startDate.isSame(endDate, 'month')) {
+    return `${startDate.format(DateFormat.TRIP_DAY)} — ${endDate.format(DateFormat.TRIP_DATE)}`;
+  }
+
+  return `${startDate.format(DateFormat.TRIP_DATE)} — ${endDate.format(DateFormat.TRIP_DATE)}`;
+}
+
+function getTotalPrice(points, offersByType) {
+  return points.reduce((totalPrice, point) => {
+    const offers = offersByType.find((offer) => offer.type === point.type)?.offers ?? [];
+    const selectedOffersPrice = offers
+      .filter((offer) => (point.offers ?? []).includes(offer.id))
+      .reduce((price, offer) => price + offer.price, 0);
+
+    return totalPrice + point.basePrice + selectedOffersPrice;
+  }, 0);
+}
+
 const filter = {
   [FilterType.EVERYTHING]: (points) => [...points],
   [FilterType.FUTURE]: (points) => points.filter(isPointFuture),
@@ -65,4 +111,4 @@ const sort = {
   [SortType.PRICE]: (points) => points.sort((pointA, pointB) => pointB.basePrice - pointA.basePrice),
 };
 
-export {formatDate, getDuration, capitalize, filter, sort};
+export {formatDate, getDuration, capitalize, getTripRoute, getTripDates, getTotalPrice, sortPointsByDate, filter, sort};

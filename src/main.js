@@ -1,5 +1,6 @@
 import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
+import TripInfoPresenter from './presenter/trip-info-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import BigTripApiService from './api/big-trip-api-service.js';
@@ -10,6 +11,7 @@ const AUTHORIZATION = 'Basic c7v2n5k9m4q8x1z6';
 const filterContainer = document.querySelector('.trip-controls__filters');
 const tripEventsContainer = document.querySelector('.trip-events');
 const newEventButton = document.querySelector('.trip-main__event-add-btn');
+const tripInfoContainer = document.querySelector('.trip-main__trip-info');
 
 const apiService = new BigTripApiService(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel({apiService});
@@ -24,6 +26,10 @@ const filterPresenter = new FilterPresenter({
   pointsModel,
   filterModel,
 });
+const tripInfoPresenter = new TripInfoPresenter({
+  container: tripInfoContainer,
+  pointsModel,
+});
 
 newEventButton.addEventListener('click', () => tripPresenter.createPoint());
 
@@ -33,6 +39,7 @@ async function bootstrap() {
   await pointsModel.initOffers();
 
   filterPresenter.init();
+  tripInfoPresenter.init();
   tripPresenter.init();
   newEventButton.disabled = false;
 }
