@@ -107,6 +107,8 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = async (point) => {
+    this.#editFormComponent.setSaving();
+
     if (this.#isNewPoint) {
       await this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MINOR, point);
       this.#handleDestroy();
@@ -122,13 +124,14 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleDeleteClick = (point) => {
+  #handleDeleteClick = async (point) => {
     if (this.#isNewPoint) {
       this.#handleDestroy();
       return;
     }
 
-    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
+    this.#editFormComponent.setDeleting();
+    await this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
   };
 
   #handleFavoriteClick = () => {
